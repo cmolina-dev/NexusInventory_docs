@@ -1,0 +1,78 @@
+stateDiagram-v2
+    [*] --> Online: App inicia con internet
+    
+    state Online {
+        [*] --> Sincronizado
+        Sincronizado --> Sincronizando: Cambios locales detectados
+        Sincronizando --> Sincronizado: Sync exitoso
+        Sincronizando --> ConErrores: Falla sincronización
+        ConErrores --> Sincronizando: Retry automático
+        
+        note right of Sincronizado
+            ✅ Base de datos local actualizada
+            ✅ Puede realizar transferencias
+            ✅ Reportes consolidados disponibles
+        end note
+    }
+    
+    state Offline {
+        [*] --> OperacionLocal
+        OperacionLocal --> ColaPendiente: Registra transacción
+        ColaPendiente --> OperacionLocal: Continúa operando
+        
+        note right of OperacionLocal
+            ✅ Ventas funcionan normalmente
+            ✅ Entradas de inventario OK
+            ✅ Consultas de stock OK
+            ❌ NO transferencias
+            ❌ NO reportes consolidados
+            ❌ NO AI Normalizer
+        end note
+        
+        note right of ColaPendiente
+            💾 IndexedDB almacena:
+            - Todas las transacciones
+            - Cambios en productos
+            - Ajustes de inventario
+            
+            📊 UI muestra:
+            "⚠️ 15 cambios pendientes de sync"
+        end note
+    }
+    
+    Online --> Offline: Pérdida de conexión
+    Offline --> Online: Conexión restaurada
+    
+    Online --> Sincronizando: Al recuperar conexión
+    
+    state "Sincronización Recuperación" as SyncRecovery {
+        [*] --> ValidandoCambios
+        ValidandoCambios --> EnviandoCola: Cambios válidos
+        EnviandoCola --> RecibiendoActualizaciones: Cola enviada
+        RecibiendoActualizaciones --> Completado: Todo sincronizado
+        
+        Completado --> [*]
+        
+        note right of ValidandoCambios
+            🔍 Valida timestamps
+            🔍 Detecta conflictos
+            🔍 Aplica política Last-Write-Wins
+        end note
+        
+        note right of EnviandoCola
+            📤 Envía en lotes:
+            1. Transacciones de inventario
+            2. Cambios en productos
+            3. Logs de auditoría
+        end note
+        
+        note right of RecibiendoActualizaciones
+            📥 Recibe del backend:
+            1. Configuraciones actualizadas
+            2. Catálogo maestro
+            3. Notificaciones de transferencias
+        end note
+    }
+    
+    Offline --> SyncRecovery: Conexión restaurada
+    SyncRecovery --> Online: Sync completo

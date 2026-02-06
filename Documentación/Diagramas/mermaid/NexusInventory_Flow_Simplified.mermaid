@@ -1,0 +1,62 @@
+graph TB
+    subgraph "SEDE A - Tienda Norte"
+        A_UI["🖥️ POS / UI"]
+        A_DB["💾 Inventario Local<br/>Productos: 150<br/>Stock total: 3,420 unidades"]
+        A_Sync["🔄 Sync Agent"]
+        
+        A_UI -->|"Venta: -5 unidades<br/>(OFFLINE OK)"| A_DB
+        A_DB -->|Detecta cambios| A_Sync
+    end
+    
+    subgraph "SEDE B - Tienda Sur"
+        B_UI["🖥️ POS / UI"]
+        B_DB["💾 Inventario Local<br/>Productos: 180<br/>Stock total: 5,230 unidades"]
+        B_Sync["🔄 Sync Agent"]
+        
+        B_UI -->|"Entrada: +50 unidades<br/>(OFFLINE OK)"| B_DB
+        B_DB -->|Detecta cambios| B_Sync
+    end
+    
+    subgraph "SEDE C - Bodega Central"
+        C_UI["🖥️ POS / UI"]
+        C_DB["💾 Inventario Local<br/>Productos: 200<br/>Stock total: 12,500 unidades"]
+        C_Sync["🔄 Sync Agent"]
+        
+        C_UI -->|"Ajuste: +100<br/>(OFFLINE OK)"| C_DB
+        C_DB -->|Detecta cambios| C_Sync
+    end
+    
+    Cloud["☁️ BACKEND CLOUD<br/>(HUB CENTRAL)"]
+    
+    A_Sync -.->|"Cuando hay internet:<br/>Sincroniza transacciones"| Cloud
+    B_Sync -.->|"Cuando hay internet:<br/>Sincroniza transacciones"| Cloud
+    C_Sync -.->|"Cuando hay internet:<br/>Sincroniza transacciones"| Cloud
+    
+    Cloud -.->|"Push: configs,<br/>catálogo maestro"| A_Sync
+    Cloud -.->|"Push: configs,<br/>catálogo maestro"| B_Sync
+    Cloud -.->|"Push: configs,<br/>catálogo maestro"| C_Sync
+    
+    subgraph "OPERACIONES INTER-SEDE (Requieren Online)"
+        Transfer["📦 Transferencias<br/><br/>1. Sede A solicita 20 unidades a Sede B<br/>2. Sistema valida que Sede B esté ONLINE<br/>3. Sede B aprueba/rechaza<br/>4. Transferencia atómica:<br/>   - Sede B: -20 unidades<br/>   - Sede A: +20 unidades"]
+        Reports["📊 Reportes Consolidados<br/><br/>Inventario Total Empresa:<br/>Sede A: 3,415 unidades ✅<br/>Sede B: 5,280 unidades ✅<br/>Sede C: 12,600 unidades ⚠️<br/>(última sync: hace 2 horas)"]
+    end
+    
+    Cloud --> Transfer
+    Cloud --> Reports
+    
+    Transfer -.->|"Requiere ambas<br/>sedes online"| A_Sync
+    Transfer -.->|"Requiere ambas<br/>sedes online"| B_Sync
+    
+    Admin["👤 Tenant Admin<br/>(Accede desde cualquier lugar)"]
+    Admin -->|Solicita transferencia| Transfer
+    Admin -->|Visualiza consolidado| Reports
+    
+    classDef sede fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef cloud fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef operation fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef user fill:#FCE4EC,stroke:#C2185B,stroke-width:2px
+    
+    class A_UI,A_DB,A_Sync,B_UI,B_DB,B_Sync,C_UI,C_DB,C_Sync sede
+    class Cloud cloud
+    class Transfer,Reports operation
+    class Admin user

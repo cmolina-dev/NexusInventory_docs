@@ -1,0 +1,109 @@
+graph TB
+    subgraph "Cliente Web/PWA - Sede A"
+        UI_A["UI / POS Lite<br/>(Agnóstica a la Red)"]
+        IndexedDB_A["IndexedDB<br/>(Base de Datos Local Sede A)"]
+        SyncAgent_A["Sync Agent<br/>(Observer + Network Detector)"]
+        
+        UI_A -->|Lee/Escribe| IndexedDB_A
+        IndexedDB_A -->|Observa cambios| SyncAgent_A
+    end
+    
+    subgraph "Cliente Web/PWA - Sede B"
+        UI_B["UI / POS Lite<br/>(Agnóstica a la Red)"]
+        IndexedDB_B["IndexedDB<br/>(Base de Datos Local Sede B)"]
+        SyncAgent_B["Sync Agent<br/>(Observer + Network Detector)"]
+        
+        UI_B -->|Lee/Escribe| IndexedDB_B
+        IndexedDB_B -->|Observa cambios| SyncAgent_B
+    end
+    
+    subgraph "Cliente Web/PWA - Sede C"
+        UI_C["UI / POS Lite<br/>(Agnóstica a la Red)"]
+        IndexedDB_C["IndexedDB<br/>(Base de Datos Local Sede C)"]
+        SyncAgent_C["Sync Agent<br/>(Observer + Network Detector)"]
+        
+        UI_C -->|Lee/Escribe| IndexedDB_C
+        IndexedDB_C -->|Observa cambios| SyncAgent_C
+    end
+    
+    DNS["DNS"]
+    Gateway["API Gateway / Load Balancer"]
+    WebSocket["WebSocket / SSE Gateway"]
+    
+    DNS --> Gateway
+    
+    SyncAgent_A -.->|Online Sync| WebSocket
+    SyncAgent_B -.->|Online Sync| WebSocket
+    SyncAgent_C -.->|Online Sync| WebSocket
+    
+    subgraph "Backend Cloud (Hub)"
+        Auth["Auth & RBAC<br/>(Tenant Isolation)"]
+        
+        TransferService["Transfer Service<br/>(Gestión de Transferencias)"]
+        InventoryService["Inventory Service<br/>(Visibilidad Consolidada)"]
+        SyncAPI["Sync API<br/>(Recepción de Cambios)"]
+        AuditLogs["Audit & Logs"]
+        
+        Gateway --> Auth
+        WebSocket --> Auth
+        
+        Auth --> TransferService
+        Auth --> InventoryService
+        Auth --> SyncAPI
+        Auth --> AuditLogs
+        
+        TransferService -.->|Notifica aprobación/rechazo| WebSocket
+        SyncAPI -.->|Push Updates| WebSocket
+    end
+    
+    subgraph "Infraestructura"
+        MessageQueue["Message Queue<br/>(Transferencias Asíncronas)"]
+        Cache["Cache<br/>(Inventario Consolidado)"]
+        
+        TransferService --> MessageQueue
+        InventoryService --> Cache
+        SyncAPI --> MessageQueue
+        
+        TransferWorkers["Transfer Workers<br/>(Procesamiento de Transferencias)"]
+        MessageQueue --> TransferWorkers
+        
+        TransferWorkers -.->|Actualiza inventario consolidado| Cache
+    end
+    
+    subgraph "AI Services (Online Only)"
+        AINormalizer["AI Normalizer<br/>(Sugerencias de Normalización)"]
+        Auth -.->|Solo Online| AINormalizer
+    end
+    
+    subgraph "Data Layer"
+        MainDB["Main DB (Multi-Tenant)<br/>(Inventario Consolidado + Transferencias)"]
+        
+        TransferWorkers -->|Registra transferencias| MainDB
+        InventoryService -->|Lee inventario consolidado| MainDB
+        SyncAPI -->|Actualiza desde sedes| MainDB
+        AuditLogs --> MainDB
+        AINormalizer -.->|Consulta catálogo| MainDB
+    end
+    
+    SyncAgent_A -.->|"Sincroniza:<br/>- Transacciones locales<br/>- Cambios de productos<br/>- Estado de sede"| SyncAPI
+    SyncAgent_B -.->|"Sincroniza:<br/>- Transacciones locales<br/>- Cambios de productos<br/>- Estado de sede"| SyncAPI
+    SyncAgent_C -.->|"Sincroniza:<br/>- Transacciones locales<br/>- Cambios de productos<br/>- Estado de sede"| SyncAPI
+    
+    TransferService -.->|"Valida disponibilidad<br/>en sede origen"| Cache
+    TransferService -.->|"Solicitud de transferencia<br/>(requiere ambas sedes online)"| TransferWorkers
+    
+    classDef sedeA fill:#E3F2FD,stroke:#1976D2,stroke-width:2px
+    classDef sedeB fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef sedeC fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef backend fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef infra fill:#FAFAFA,stroke:#616161,stroke-width:2px
+    classDef data fill:#E0F2F1,stroke:#00695C,stroke-width:2px
+    classDef ai fill:#FCE4EC,stroke:#C2185B,stroke-width:2px
+    
+    class UI_A,IndexedDB_A,SyncAgent_A sedeA
+    class UI_B,IndexedDB_B,SyncAgent_B sedeB
+    class UI_C,IndexedDB_C,SyncAgent_C sedeC
+    class Auth,TransferService,InventoryService,SyncAPI,AuditLogs,Gateway,WebSocket backend
+    class MessageQueue,Cache,TransferWorkers infra
+    class MainDB data
+    class AINormalizer ai

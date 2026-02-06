@@ -1,0 +1,46 @@
+sequenceDiagram
+    participant Admin as 👤 Tenant Admin
+    participant Cloud as ☁️ Backend Cloud
+    participant SedeA as 🏪 Sede A (Solicitante)
+    participant SedeB as 🏭 Sede B (Origen)
+    
+    Note over Admin,SedeB: Escenario: Sede A necesita 50 unidades de "Producto X"
+    
+    Admin->>Cloud: 1. Solicitar transferencia<br/>(50 unidades de Sede B a Sede A)
+    
+    Cloud->>Cloud: 2. Validar que ambas sedes<br/>estén ONLINE
+    
+    alt Alguna sede está OFFLINE
+        Cloud-->>Admin: ❌ Error: No se puede transferir.<br/>Sede B está offline.
+    else Ambas sedes ONLINE
+        Cloud->>SedeB: 3. ¿Tienes 50 unidades disponibles?
+        SedeB->>SedeB: Consulta inventario local
+        
+        alt Stock insuficiente
+            SedeB-->>Cloud: ❌ Solo tengo 30 unidades
+            Cloud-->>Admin: ❌ Transferencia rechazada:<br/>Stock insuficiente
+        else Stock disponible
+            SedeB-->>Cloud: ✅ Tengo 50 unidades disponibles
+            Cloud->>SedeB: 4. Notificar solicitud pendiente<br/>(requiere aprobación)
+            
+            Note over SedeB: Gerente de Sede B revisa solicitud
+            
+            SedeB->>Cloud: 5. Aprobar transferencia
+            
+            Cloud->>Cloud: 6. Ejecutar transferencia atómica:<br/>- Registrar en Main DB<br/>- Crear transacción salida Sede B<br/>- Crear transacción entrada Sede A
+            
+            par Actualización en paralelo
+                Cloud->>SedeB: Push: Transacción salida -50
+                SedeB->>SedeB: Actualizar IndexedDB local<br/>(Stock: 100 → 50)
+            and
+                Cloud->>SedeA: Push: Transacción entrada +50
+                SedeA->>SedeA: Actualizar IndexedDB local<br/>(Stock: 20 → 70)
+            end
+            
+            Cloud-->>Admin: ✅ Transferencia completada
+            
+            Note over SedeA,SedeB: Ambas sedes pueden operar offline<br/>con su nuevo inventario actualizado
+        end
+    end
+    
+    Note over Admin,SedeB: Si alguna sede se desconecta durante el proceso,<br/>la transferencia se marca como "pendiente" y se reintenta.
