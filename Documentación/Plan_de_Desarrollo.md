@@ -1,7 +1,7 @@
-# Plan de Desarrollo - NexusInventory
+# Plan de Desarrollo - Stocky
 ## Roadmap de Implementación
 
-**Proyecto:** NexusInventory  
+**Proyecto:** Stocky  
 **Objetivo:** Sistema de inventario multi-tenant offline-first  
 **Última actualización:** 2026-02-07
 

@@ -1,7 +1,7 @@
 # Schema IndexedDB con RxDB
 ## Base de Datos Local por Sede
 
-**Proyecto:** NexusInventory  
+**Proyecto:** Stocky  
 **Versión:** 1.0  
 **Última actualización:** 2026-02-07
 

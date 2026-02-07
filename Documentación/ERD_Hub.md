@@ -1,7 +1,7 @@
 # Diagrama Entidad-Relación (ERD)
 ## Base de Datos PostgreSQL - Backend Hub
 
-**Proyecto:** NexusInventory  
+**Proyecto:** Stocky  
 **Versión:** 1.0  
 **Última actualización:** 2026-02-07
 
@@ -9,7 +9,7 @@
 
 ## Introducción
 
-Este documento describe el esquema completo de la base de datos relacional PostgreSQL que actúa como **hub centralizado** del sistema NexusInventory. Esta base de datos almacena:
+Este documento describe el esquema completo de la base de datos relacional PostgreSQL que actúa como **hub centralizado** del sistema Stocky. Esta base de datos almacena:
 
 - **Vistas consolidadas** del inventario de todas las sedes
 - **Coordinación** de transferencias entre sedes
