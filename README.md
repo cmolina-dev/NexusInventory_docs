@@ -1,4 +1,4 @@
-## Documentación para el proyecto NexusInventory 
+## Documentación para el proyecto Stocky 
 
 ##### El repositorio incluye los siguientes documentos y diagramas:
 - Requerimientos
