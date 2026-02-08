@@ -31,14 +31,14 @@ Prioridad 4: Features avanzadas (IA, reportes complejos)
 
 ### Backend
 
-- [ ] Inicializar proyecto NestJS con TypeScript
-- [ ] Configurar PostgreSQL local (Docker recomendado)
-- [ ] Configurar Redis local (Docker recomendado)
-- [ ] Setup Prisma ORM
-- [ ] Definir schema.prisma completo (basado en ERD_PostgreSQL.md)
-- [ ] Ejecutar primera migración
-- [ ] Configurar variables de entorno (.env)
-- [ ] Setup ESLint y Prettier
+- [X] Inicializar proyecto NestJS con TypeScript
+- [X] Configurar PostgreSQL local (Docker recomendado)
+- [X] Configurar Redis local (Docker recomendado)
+- [X] Setup Prisma ORM
+- [X] Definir schema.prisma completo (basado en ERD_PostgreSQL.md)
+- [X] Ejecutar primera migración
+- [X] Configurar variables de entorno (.env)
+- [X] Setup ESLint y Prettier
 
 ### Frontend
 
