@@ -34,7 +34,6 @@ Las sedes NO compiten con la nube:
     • Para transacciones (ventas), no hay conflictos: modelo append-only
 
 #### 2.3 Sincronización Robusta
-Rechazamos modelos ingenuos (polling cada X segundos) a favor de:
 
     • Event-driven: Cambios en SQLite local disparan eventos de sincronización
     • Queue-based: Cola persistente con retry exponential backoff
@@ -70,8 +69,8 @@ Message Queue | BullMQ + Redis | Jobs asíncronos (transferencias, sincronizacio
 #### 3.3 Infraestructura
 Componente | Tecnología | Justificación
 --- | --- | ---
-Base de Datos | PostgreSQL 16+ | ACID, JSON support, partitioning por tenant, full-text search
-Cache | Redis 7 | Caché de inventario consolidado, pub/sub para WebSocket, sesiones
+Base de Datos | PostgreSQL 18 | ACID, JSON support, partitioning por tenant, full-text search
+Cache | Redis 8 | Caché de inventario consolidado, pub/sub para WebSocket, sesiones
 Object Storage | AWS S3 / Cloudflare R2 | Imágenes de productos, backups de SQLite, instaladores de la app
 Hosting Backend | Railway / Render / AWS | PostgreSQL managed, auto-scaling, CI/CD
 Hosting Web Admin | Vercel / Netlify | Edge CDN, deploy automático desde Git

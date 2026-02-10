@@ -41,27 +41,27 @@ Prioridad 4: Features avanzadas (IA, reportes complejos, LAN sync)
 
 ### Backend
 
-- [ ] Inicializar proyecto NestJS con TypeScript
-- [ ] Configurar PostgreSQL local (Docker recomendado)
-- [ ] Configurar Redis local (Docker recomendado)
-- [ ] Setup Prisma ORM
-- [ ] Definir schema.prisma completo (basado en ERD_Hub_v2.md)
-- [ ] Ejecutar primera migración
-- [ ] Configurar variables de entorno (.env)
-- [ ] Setup ESLint y Prettier
+- [x] Inicializar proyecto NestJS con TypeScript
+- [x] Configurar PostgreSQL local (Docker recomendado)
+- [x] Configurar Redis local (Docker recomendado)
+- [x] Setup Prisma ORM
+- [x] Definir schema.prisma completo (basado en ERD_Hub_v2.md)
+- [x] Ejecutar primera migración
+- [x] Configurar variables de entorno (.env)
+- [x] Setup ESLint y Prettier
 
 ### Desktop App (Local)
 
-- [ ] Inicializar proyecto Tauri 2.0 (preferido) o Electron
-- [ ] Configurar React + Vite + TypeScript
-- [ ] Configurar Tailwind CSS
-- [ ] Instalar Shadcn/ui
-- [ ] Configurar SQLite (via Tauri SQL plugin o better-sqlite3)
+- [X] Inicializar proyecto Electron
+- [X] Configurar React + Vite + TypeScript
+- [X] Configurar Tailwind CSS
+- [X] Instalar Shadcn/ui
+- [ ] Configurar SQLite (better-sqlite3)
 - [ ] Configurar estructura de carpetas
 - [ ] Setup ESLint y Prettier
 - [ ] Configurar hot reload para desarrollo
 
-### Web Admin (Opcional para MVP)
+### Web Admin
 
 - [ ] Inicializar proyecto Next.js (App Router)
 - [ ] Configurar Tailwind CSS
